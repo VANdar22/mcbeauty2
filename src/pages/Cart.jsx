@@ -1,0 +1,203 @@
+import { Link } from "react-router-dom";
+import { useCart } from "../components/Cartcontext";
+import SlideCommit from "../components/SlideCommit";
+import { useRewards } from "../components/Rewardscontext";
+
+const FREE_SHIPPING_THRESHOLD = 50; // TODO: load from your settings
+
+const CATEGORY_LABELS = { skincare: "Skincare", perfume: "Perfume", hair: "Hair product" };
+
+const money = (currency, n) =>
+  `${currency}${Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+const pillBtn =
+  "rounded-full border border-foreground px-6 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+
+function Thumb({ image, name }) {
+  return (
+    <div className="h-28 w-28 shrink-0 overflow-hidden bg-muted sm:h-32 sm:w-32">
+      {image ? (
+        <img src={image} alt={name} className="h-full w-full object-cover" />
+      ) : (
+        <div className="grid h-full place-items-center text-xs text-muted-foreground">Image</div>
+      )}
+    </div>
+  );
+}
+
+function QtyStepper({ item, updateQty }) {
+  const btn =
+    "grid h-9 w-9 place-items-center text-lg transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  return (
+    <div className="inline-flex items-center rounded-full border border-foreground">
+      <button
+        type="button"
+        className={`${btn} rounded-l-full`}
+        onClick={() => updateQty(item.id, item.qty - 1)}
+        aria-label={`Decrease quantity of ${item.name}`}
+      >
+        −
+      </button>
+      <span className="w-8 text-center text-sm font-medium" aria-live="polite">
+        {item.qty}
+      </span>
+      <button
+        type="button"
+        className={`${btn} rounded-r-full`}
+        onClick={() => updateQty(item.id, item.qty + 1)}
+        aria-label={`Increase quantity of ${item.name}`}
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
+// TODO: replace with your real payment call, e.g.
+// const res = await fetch("/api/pay", { method: "POST", body: JSON.stringify(order) });
+// if (!res.ok) throw new Error("Payment failed");
+async function pay(order) {
+  return order;
+}
+
+export default function Cart() {
+  const { items, subtotal, cartCount, updateQty, removeItem, clearCart } = useCart();
+  const { earnPoints } = useRewards();
+
+  const currency = items[0]?.currency ?? "$";
+  const remaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
+  const progress = Math.min(subtotal / FREE_SHIPPING_THRESHOLD, 1) * 100;
+
+  if (items.length === 0) {
+    return (
+      <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 pt-24 text-center">
+        <h1 className="text-3xl font-medium">Your bag is empty</h1>
+        <p className="mt-3 text-muted-foreground">Looks like you haven't added anything yet.</p>
+        <Link to="/gallery" className={`${pillBtn} mt-8 bg-foreground text-background hover:bg-foreground/90`}>
+          Start shopping
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-6 pb-16 pt-28">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-medium">Your bag</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {cartCount} {cartCount === 1 ? "item" : "items"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={clearCart}
+          className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Clear bag
+        </button>
+      </div>
+
+      <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
+        {/* Line items */}
+        <ul className="divide-y divide-border border-y border-border">
+          {items.map((item) => (
+            <li key={item.id} className="flex gap-5 py-6">
+              <Thumb image={item.image} name={item.name} />
+
+              <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 sm:flex-row">
+                <div className="min-w-0 space-y-1 text-sm">
+                  <p className="text-muted-foreground">{CATEGORY_LABELS[item.category] ?? item.category}</p>
+                  <p className="text-base font-medium">{item.name}</p>
+                  <p className="text-muted-foreground">{money(item.currency, item.price)} each</p>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-between">
+                  <p className="font-medium text-primary">{money(item.currency, item.price * item.qty)}</p>
+                  <div className="flex items-center gap-4">
+                    <QtyStepper item={item} updateQty={updateQty} />
+                    <button
+                      type="button"
+                      onClick={() => removeItem(item.id)}
+                      className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* Summary */}
+        <aside className="h-fit space-y-5 bg-card p-6 text-card-foreground shadow-[var(--shadow-md)]">
+          <h2 className="text-xl font-medium">Order summary</h2>
+
+          <div>
+            <p className="text-sm">
+              {remaining === 0
+                ? "You have earned FREE shipping!"
+                : `Add ${money(currency, remaining)} more for FREE shipping`}
+            </p>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-all duration-500 motion-reduce:transition-none"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          <dl className="space-y-2 border-t border-border pt-5 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Subtotal</dt>
+              <dd className="font-medium">{money(currency, subtotal)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Shipping</dt>
+              <dd className="font-medium">{remaining === 0 ? "Free" : "Calculated at checkout"}</dd>
+            </div>
+          </dl>
+
+          <div className="flex justify-between border-t border-border pt-5 text-lg font-medium">
+            <span>Total</span>
+            <span>{money(currency, subtotal)}</span>
+          </div>
+
+          <div className="flex justify-center">
+            <SlideCommit
+              label="Slide to pay"
+              doneLabel="Paid"
+              errorLabel="Payment failed"
+              onConfirm={() => pay({ items, subtotal, currency })}
+              onDone={() => {
+                console.log("paid");
+                earnPoints(subtotal); // 1 point per $1 spent. TODO: use your own rate
+                // Wait for the "Paid" animation to finish, then empty the bag.
+                setTimeout(clearCart, 1500);
+              }}
+              onError={(reason) => console.log(reason)}
+              trackColor="hsl(var(--foreground))"
+              handleColor="hsl(var(--background))"
+              successColor="#22c55e"
+              dangerColor="#e5484d"
+              width={280}
+              height={56}
+              radius={28}
+              speed={50}
+              returnBounce={0.38}
+              landingDip={0.026}
+              holdMs={1500}
+              outcome="resolve"
+              latency={1200}
+              disabled={items.length === 0}
+            />
+          </div>
+          <Link to="/gallery" className={`${pillBtn} block text-center hover:bg-muted`}>
+            Keep shopping
+          </Link>
+        </aside>
+      </div>
+    </div>
+  );
+}
