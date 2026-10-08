@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/Productcard";
-import { searchProducts } from "../lib/catalog";
+import { searchProducts } from "../lib/Catalog";
 
 export default function Search() {
   const [params] = useSearchParams();
@@ -32,7 +32,7 @@ export default function Search() {
 
   return (
     <div className="mx-auto min-h-[70vh] max-w-7xl px-4 pb-16 pt-28 md:px-8">
-      <h1 className="text-2xl font-medium tracking-tight md:text-4xl">
+      <h1 className="text-2xl font-black tracking-tight md:text-4xl">
         {q ? `Results for “${q}”` : "Search"}
       </h1>
 

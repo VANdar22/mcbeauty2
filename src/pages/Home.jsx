@@ -210,25 +210,6 @@ function Banner({
               {text}
             </p>
           )}
-
-          {ctaLabel && (
-            <Link
-              to={ctaHref}
-              className="mt-3 inline-flex w-fit items-center gap-2 bg-black px-3 py-2 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition-colors hover:bg-black/90 motion-reduce:transition-none sm:mt-5 sm:px-5 sm:py-2.5 sm:text-xs"
-            >
-              {ctaLabel}
-              <svg
-                viewBox="0 0 24 24"
-                className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14m-6-6 6 6-6 6" />
-              </svg>
-            </Link>
-          )}
         </div>
       </div>
     </section>

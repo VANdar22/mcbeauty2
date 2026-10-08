@@ -23,6 +23,7 @@ module.exports = {
         lobster: ['"Lobster"', "system-ui", "cursive"],
         michroma: ['"Michroma"', "system-ui", "sans-serif"],
         ultra: ['"Ultra"', "Georgia", "serif"],
+        climate: ['"Climate Crisis"', "Georgia", "serif"],
 
       },
       colors: {

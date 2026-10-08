@@ -20,7 +20,7 @@ const money = (currency, n) =>
   `${currency}${Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const pillBtn =
-  "rounded-full border border-foreground px-6 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  "border border-foreground px-6 py-3 text-sm font-medium transition hover:bg-primary/25 ";
 
 function Thumb({ image, name }) {
   return (
@@ -139,11 +139,11 @@ export default function CartDrawer() {
                 <Link
                   to="/cart"
                   onClick={closeDrawer}
-                  className={`${pillBtn} block bg-foreground text-center text-background hover:bg-foreground/90`}
+                  className={`${pillBtn} block text-center`}
                 >
                   View bag
                 </Link>
-                <button type="button" onClick={closeDrawer} className={`${pillBtn} w-full hover:bg-muted`}>
+                <button type="button" onClick={closeDrawer} className={`${pillBtn} w-full `}>
                   Keep shopping
                 </button>
               </div>
@@ -167,7 +167,7 @@ export default function CartDrawer() {
                       <button
                         type="button"
                         onClick={() => addItem(p)}
-                        className={`${pillBtn} mt-2 hover:bg-foreground hover:text-background`}
+                        className={`${pillBtn} mt-2 hover:bg-foreground`}
                       >
                         Add to bag
                       </button>

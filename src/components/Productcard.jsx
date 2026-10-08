@@ -63,7 +63,7 @@ export function ProductCard({ product }) {
           type="button"
           onClick={() => addItem(product)}
           aria-label={`Add ${product.name} to bag`}
-          className="absolute bottom-3 right-3 flex h-9 max-w-[2.25rem] items-center overflow-hidden bg-black text-white transition-[max-width] duration-300 focus-visible:max-w-[11rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:transition-none md:group-hover:max-w-[11rem]"
+          className="absolute bottom-3 right-3 flex h-9 max-w-[2.25rem] items-center overflow-hidden bg-primary/25 transition-[max-width] duration-300 focus-visible:max-w-[11rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:transition-none md:group-hover:max-w-[11rem]"
         >
           <span className="grid h-9 w-9 shrink-0 place-items-center">
             <BagIcon className="h-[18px] w-[18px]" />

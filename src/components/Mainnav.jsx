@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import logoimage from "../assets/MCBlogo.png";
 import { useCart } from "./Cartcontext";
 import SearchBox from "./SearchBox";
-import { SignInButton, UserButton, useUser } from "../lib/clerk";
+import { getFacets } from "../lib/Catalog";
+import { Show, SignInButton, SignUpButton, UserButton, useUser } from "../lib/clerk";
 
 /* ------------------------------------------------------------------ */
 /* 1. DATA LAYER — replace the bodies of these functions with your DB  */
@@ -12,35 +13,14 @@ import { SignInButton, UserButton, useUser } from "../lib/clerk";
 /*    Images:                 [{ id, title, href, imageUrl }]           */
 /* ------------------------------------------------------------------ */
 
-const PLACEHOLDER_PRODUCT_TYPES = [
-  { id: 1, name: "Cleansers", slug: "cleansers" },
-  { id: 2, name: "Toners", slug: "toners" },
-  { id: 3, name: "Serums", slug: "serums" },
-  { id: 4, name: "Moisturizers", slug: "moisturizers" },
-  { id: 5, name: "Sunscreen", slug: "sunscreen" },
-  { id: 6, name: "Scrubs", slug: "scrubs" },
-  { id: 7, name: "Body Wash", slug: "body-wash" },
-  { id: 8, name: "Body Oils", slug: "body-oils" },
-];
-
-const PLACEHOLDER_BRANDS = [
-  { id: 1, name: "CeraVe", slug: "cerave" },
-  { id: 2, name: "Cetaphil", slug: "cetaphil" },
-  { id: 3, name: "Neutrogena", slug: "neutrogena" },
-  { id: 4, name: "The Ordinary", slug: "the-ordinary" },
-  { id: 5, name: "Olay", slug: "olay" },
-  { id: 6, name: "NIVEA", slug: "nivea" },
-  { id: 7, name: "Palmer's", slug: "palmers" },
-];
-
 async function fetchProductTypes() {
-  // TODO: const res = await fetch("/api/product-types"); return res.json();
-  return PLACEHOLDER_PRODUCT_TYPES;
+  // TODO: load from your API
+  return getFacets().types.map((t) => ({ id: t.slug, name: t.name, slug: t.slug }));
 }
 
 async function fetchBrands() {
-  // TODO: const res = await fetch("/api/brands?limit=20"); return res.json();
-  return PLACEHOLDER_BRANDS;
+  // TODO: load from your API
+  return getFacets().brands.map((b) => ({ id: b.slug, name: b.name, slug: b.slug }));
 }
 
 async function fetchShopImages() {
@@ -48,19 +28,19 @@ async function fetchShopImages() {
     {
       id: 1,
       title: "Skincare",
-      href: "/skincare",
+      href: "/products?category=skincare",
       imageUrl: "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387398/skin2.webp",
     },
     {
       id: 2,
       title: "Haircare",
-      href: "/haircare",
+      href: "/products?category=hair",
       imageUrl: "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387396/hair1.webp",
     },
     {
       id: 3,
       title: "Perfume",
-      href: "/perfume",
+      href: "/products?category=perfume",
       imageUrl: "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387397/perfume1.webp",
     },
   ];
@@ -105,9 +85,9 @@ function useCatalogMenu() {
 /* ------------------------------------------------------------------ */
 
 const NAV_TABS = [
-  { key: "shop", label: "Shop", href: "/shop", mega: true },
-  { key: "new", label: "What's New", href: "/new", mega: true },
-  { key: "brands", label: "Brands", href: "/brands", mega: true },
+  { key: "shop", label: "Shop", href: "/products", mega: true },
+  { key: "new", label: "What's New", href: "/products?sort=new", mega: true },
+  { key: "brands", label: "Brands", href: "/products", mega: true },
 ];
 
 const UTILITY_LINKS = [
@@ -205,7 +185,7 @@ const itemLink =
   "inline-block py-0.5 text-sm text-foreground/80 underline-offset-4 hover:text-foreground hover:underline";
 
 // Database-driven list: [{ id, name, slug }]
-function MenuColumn({ title, titleHref, items, hrefPrefix, loading, error, twoColumns = false }) {
+function MenuColumn({ title, titleHref, items, getHref, loading, error, twoColumns = false }) {
   return (
     <div>
       <ColumnTitle title={title} titleHref={titleHref} />
@@ -226,7 +206,7 @@ function MenuColumn({ title, titleHref, items, hrefPrefix, loading, error, twoCo
         <ul className={twoColumns ? "columns-2 gap-8" : ""}>
           {items.map((item) => (
             <li key={item.id} className="mb-3 break-inside-avoid">
-              <NavLink href={`${hrefPrefix}/${item.slug}`} className={itemLink}>
+              <NavLink href={getHref(item)} className={itemLink}>
                 {item.name}
               </NavLink>
             </li>
@@ -308,7 +288,7 @@ function BrandsDirectory({ brands, loading, error, mobile }) {
             <ul>
               {list.map((b) => (
                 <li key={b.id} className="mb-2">
-                  <NavLink href={`/brands/${b.slug}`} className={itemLink}>
+                  <NavLink href={`/products?brand=${b.slug}`} className={itemLink}>
                     {b.name}
                   </NavLink>
                 </li>
@@ -323,7 +303,7 @@ function BrandsDirectory({ brands, loading, error, mobile }) {
       <ul className={cols}>
         {brands.slice(0, BRANDS_SHOWN).map((b) => (
           <li key={b.id} className="mb-3 break-inside-avoid">
-            <NavLink href={`/brands/${b.slug}`} className={itemLink}>
+            <NavLink href={`/products?brand=${b.slug}`} className={itemLink}>
               {b.name}
             </NavLink>
           </li>
@@ -336,7 +316,7 @@ function BrandsDirectory({ brands, loading, error, mobile }) {
     <div>
       <ColumnTitle title="Shop by brand" />
       {body}
-      <ViewAllLink href="/brands">All brands</ViewAllLink>
+      <ViewAllLink href="/products">All brands</ViewAllLink>
     </div>
   );
 }
@@ -363,7 +343,7 @@ function TabContent({ tabKey, mobile = false, data }) {
           <MenuColumn
             title="Shop by product type"
             items={productTypes}
-            hrefPrefix="/skincare"
+            getHref={(item) => `/products?type=${item.slug}`}
             loading={loading}
             error={error}
             twoColumns={!mobile && productTypes.length > 6}
@@ -377,7 +357,7 @@ function TabContent({ tabKey, mobile = false, data }) {
   if (tabKey === "new") {
     return (
       <div className={mobile ? "space-y-6" : "grid max-w-xl gap-12 md:grid-cols-2"}>
-        <LinkList title="What's new" titleHref="/new" links={NEW_LINKS} />
+        <LinkList title="What's new" titleHref="/products?sort=new" links={NEW_LINKS} />
         <LinkList title="Available now" titleHref="/products?filter=in-stock" links={AVAILABLE_LINKS} />
       </div>
     );
@@ -432,47 +412,58 @@ const Icon = {
 };
 
 function AccountButton() {
-  const { isLoaded, isSignedIn } = useUser();
+  return (
+    <>
+      <Show when="signed-out">
+        <SignInButton mode="modal">
+          <button type="button" aria-label="Sign in" className={`inline-flex p-1 ${focusRing}`}>
+            {Icon.user}
+          </button>
+        </SignInButton>
+      </Show>
 
-  if (!isLoaded) return <span className="inline-flex h-8 w-8" aria-hidden="true" />;
+      <Show when="signed-in">
+        <span className="inline-flex p-1">
+          <UserButton />
+        </span>
+      </Show>
+    </>
+  );
+}
 
-  if (isSignedIn) {
-    return (
-      <span className="inline-flex p-1">
-        <UserButton />
-      </span>
-    );
-  }
+function MobileUserRow() {
+  const { user } = useUser();
 
   return (
-    <SignInButton mode="modal">
-      <button type="button" aria-label="Sign in" className={`inline-flex p-1 ${focusRing}`}>
-        {Icon.user}
-      </button>
-    </SignInButton>
+    <div className="flex items-center gap-3 px-4 py-3.5 text-sm">
+      <UserButton />
+      <span>{user?.firstName || "My account"}</span>
+    </div>
   );
 }
 
 function MobileAccount() {
-  const { isLoaded, isSignedIn, user } = useUser();
-
-  if (!isLoaded) return null;
-
-  if (isSignedIn) {
-    return (
-      <div className="flex items-center gap-3 px-4 py-3.5 text-sm">
-        <UserButton />
-        <span>{user?.firstName || "My account"}</span>
-      </div>
-    );
-  }
+  const rowButton = `flex w-full items-center gap-3 px-4 py-3.5 text-sm ${focusRing}`;
 
   return (
-    <SignInButton mode="modal">
-      <button type="button" className={`flex w-full items-center gap-3 px-4 py-3.5 text-sm ${focusRing}`}>
-        {Icon.user} Sign in
-      </button>
-    </SignInButton>
+    <>
+      <Show when="signed-out">
+        <SignInButton mode="modal">
+          <button type="button" className={rowButton}>
+            {Icon.user} Sign in
+          </button>
+        </SignInButton>
+        <SignUpButton mode="modal">
+          <button type="button" className={`${rowButton} text-muted-foreground`}>
+            <span className="h-6 w-6 shrink-0" aria-hidden="true" /> Create account
+          </button>
+        </SignUpButton>
+      </Show>
+
+      <Show when="signed-in">
+        <MobileUserRow />
+      </Show>
+    </>
   );
 }
 

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../components/Cartcontext";
 import SlideCommit from "../components/SlideCommit";
@@ -11,11 +12,29 @@ const money = (currency, n) =>
   `${currency}${Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const pillBtn =
-  "rounded-full border border-foreground px-6 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  " border border-foreground px-6 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+
+// Measures the available width so the slider never overflows narrow phones.
+function useFitWidth(max) {
+  const ref = useRef(null);
+  const [width, setWidth] = useState(max);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setWidth(Math.min(max, Math.floor(el.clientWidth)));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [max]);
+
+  return [ref, width];
+}
 
 function Thumb({ image, name }) {
   return (
-    <div className="h-28 w-28 shrink-0 overflow-hidden bg-muted sm:h-32 sm:w-32">
+    <div className="h-24 w-24 shrink-0 overflow-hidden bg-muted sm:h-32 sm:w-32">
       {image ? (
         <img src={image} alt={name} className="h-full w-full object-cover" />
       ) : (
@@ -29,7 +48,7 @@ function QtyStepper({ item, updateQty }) {
   const btn =
     "grid h-9 w-9 place-items-center text-lg transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
   return (
-    <div className="inline-flex items-center rounded-full border border-foreground">
+    <div className="inline-flex shrink-0 items-center rounded-full border border-foreground">
       <button
         type="button"
         className={`${btn} rounded-l-full`}
@@ -63,6 +82,7 @@ async function pay(order) {
 export default function Cart() {
   const { items, subtotal, cartCount, updateQty, removeItem, clearCart } = useCart();
   const { earnPoints } = useRewards();
+  const [slideRef, slideWidth] = useFitWidth(280);
 
   const currency = items[0]?.currency ?? "$";
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
@@ -70,10 +90,21 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 pt-24 text-center">
-        <h1 className="text-3xl font-medium">Your bag is empty</h1>
-        <p className="mt-3 text-muted-foreground">Looks like you haven't added anything yet.</p>
-        <Link to="/gallery" className={`${pillBtn} mt-8 bg-foreground text-background hover:bg-foreground/90`}>
+      <div className="mx-auto flex min-h-[70vh] w-full max-w-2xl flex-col items-center justify-center px-4 pb-10 pt-24 text-center sm:px-6 md:pt-28">
+        <p className="text-base font-medium text-muted-foreground md:text-lg">
+          Oops! Looks like you haven't added anything yet.
+        </p>
+    
+        <img
+          src="https://res.cloudinary.com/zomqdsfa/image/upload/v1791492783/copy_of_copy_of_cosmos_2032777511.webp"
+          alt="Your bag is empty"
+          className="mt-8 ml-6 h-auto w-full max-w-[20rem] object-contain sm:max-w-sm md:max-w-md"
+        />
+    
+        <Link
+          to="/gallery"
+          className={`${pillBtn} mt-8  hover:bg-primary/25`}
+        >
           Start shopping
         </Link>
       </div>
@@ -81,7 +112,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pb-16 pt-28">
+    <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-28 sm:px-6">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-medium">Your bag</h1>
@@ -98,23 +129,24 @@ export default function Cart() {
         </button>
       </div>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
+      {/* grid-cols-1 + min-w-0 stop long content from stretching the page sideways on phones */}
+      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* Line items */}
-        <ul className="divide-y divide-border border-y border-border">
+        <ul className="min-w-0 divide-y divide-border border-y border-border">
           {items.map((item) => (
-            <li key={item.id} className="flex gap-5 py-6">
+            <li key={item.id} className="flex gap-4 py-5 sm:gap-5 sm:py-6">
               <Thumb image={item.image} name={item.name} />
 
-              <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 sm:flex-row">
+              <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 sm:flex-row sm:gap-4">
                 <div className="min-w-0 space-y-1 text-sm">
                   <p className="text-muted-foreground">{CATEGORY_LABELS[item.category] ?? item.category}</p>
-                  <p className="text-base font-medium">{item.name}</p>
+                  <p className="break-words text-base font-medium">{item.name}</p>
                   <p className="text-muted-foreground">{money(item.currency, item.price)} each</p>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-between">
+                <div className="flex min-w-0 flex-col gap-3 sm:items-end sm:justify-between">
                   <p className="font-medium text-primary">{money(item.currency, item.price * item.qty)}</p>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     <QtyStepper item={item} updateQty={updateQty} />
                     <button
                       type="button"
@@ -131,7 +163,7 @@ export default function Cart() {
         </ul>
 
         {/* Summary */}
-        <aside className="h-fit space-y-5 bg-card p-6 text-card-foreground shadow-[var(--shadow-md)]">
+        <aside className="h-fit min-w-0 space-y-5 bg-card p-5 text-card-foreground shadow-[var(--shadow-md)] sm:p-6">
           <h2 className="text-xl font-medium">Order summary</h2>
 
           <div>
@@ -149,13 +181,13 @@ export default function Cart() {
           </div>
 
           <dl className="space-y-2 border-t border-border pt-5 text-sm">
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Subtotal</dt>
               <dd className="font-medium">{money(currency, subtotal)}</dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Shipping</dt>
-              <dd className="font-medium">{remaining === 0 ? "Free" : "Calculated at checkout"}</dd>
+              <dd className="text-right font-medium">{remaining === 0 ? "Free" : "Calculated at checkout"}</dd>
             </div>
           </dl>
 
@@ -164,7 +196,8 @@ export default function Cart() {
             <span>{money(currency, subtotal)}</span>
           </div>
 
-          <div className="flex justify-center">
+          {/* The wrapper is measured; the slider is never wider than it */}
+          <div ref={slideRef} className="flex w-full justify-center">
             <SlideCommit
               label="Slide to pay"
               doneLabel="Paid"
@@ -177,11 +210,11 @@ export default function Cart() {
                 setTimeout(clearCart, 1500);
               }}
               onError={(reason) => console.log(reason)}
-              trackColor="hsl(var(--foreground))"
-              handleColor="hsl(var(--background))"
+              trackColor="hsl(var(--primary)/0.25)"
+              handleColor="hsl(var(--primary)/0.45)"
               successColor="#22c55e"
               dangerColor="#e5484d"
-              width={280}
+              width={slideWidth}
               height={56}
               radius={28}
               speed={50}

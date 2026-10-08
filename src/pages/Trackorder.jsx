@@ -2,6 +2,12 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ORDER_STEPS, trackOrder } from "../lib/orders";
 import { useUser } from "../lib/clerk";
+import LoopVideo from "../components/LoopVideo";
+
+const VIDEO_DELIVERED =
+  "https://res.cloudinary.com/zomqdsfa/video/upload/v1791456038/cosmos_398577695.mp4";
+const VIDEO_IN_PROGRESS =
+  "https://res.cloudinary.com/zomqdsfa/video/upload/v1791456038/cosmos_1397371085.mp4";
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -37,32 +43,50 @@ function OrderResult({ order }) {
   const deliveredAt = order.updates.find((u) => u.status === "delivered")?.at ?? order.eta;
 
   return (
-    <section aria-live="polite" className="mt-12 border-t border-border pt-10">
-      <p className={label}>Order {order.number}</p>
-      <h2
-        className={`mt-2 flex items-center gap-3 text-2xl font-medium md:text-3xl ${
-          delivered ? "text-green-600" : ""
-        }`}
-      >
-        {delivered && (
-          <svg
-            viewBox="0 0 24 24"
-            className="h-7 w-7 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="m7.5 12.5 3 3 6-6.5" />
-          </svg>
-        )}
-        {statusLabel}
-      </h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        {delivered ? `Delivered on ${formatDate(deliveredAt)}` : `Estimated delivery ${formatDate(order.eta)}`}
-      </p>
+    <section
+      aria-live="polite"
+      className="mt-12 grid grid-cols-[1fr_auto] gap-x-4 border-t border-border pt-10 md:grid-cols-[1fr_16rem] md:gap-x-12"
+    >
+      {/* Header: order number, status, delivery date */}
+      <div>
+        <p className={label}>Order {order.number}</p>
+        <h2
+          className={`mt-2 flex items-center gap-3 text-2xl font-medium md:text-3xl ${
+            delivered ? "text-green-600" : ""
+          }`}
+        >
+          {delivered && (
+            <svg
+              viewBox="0 0 24 24"
+              className="h-7 w-7 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="m7.5 12.5 3 3 6-6.5" />
+            </svg>
+          )}
+          {statusLabel}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {delivered ? `Delivered on ${formatDate(deliveredAt)}` : `Estimated delivery ${formatDate(order.eta)}`}
+        </p>
+      </div>
 
+      {/* One video element, placed differently per screen:
+          mobile  -> small clip beside the status
+          desktop -> sticky column on the right, keeps its own proportions */}
+      <LoopVideo
+        key={delivered ? "delivered" : "in-progress"}
+        src={delivered ? VIDEO_DELIVERED : VIDEO_IN_PROGRESS}
+        width={600}
+        posterAt={delivered ? 2 : 1}
+        className="block h-auto w-24 self-start sm:w-28 md:sticky md:top-28 md:row-span-2 md:w-full"
+      />
+
+      <div className="col-span-2 md:col-span-1">
       <ol aria-label="Order progress" className="mt-8 flex gap-1.5">
         {ORDER_STEPS.map(([key, text], i) => (
           <li key={key} className="flex-1" aria-current={i === stepIndex ? "step" : undefined}>
@@ -131,6 +155,7 @@ function OrderResult({ order }) {
           Contact us
         </Link>
       </p>
+      </div>
     </section>
   );
 }
@@ -175,7 +200,7 @@ export default function TrackOrder() {
   };
 
   return (
-    <div className="mx-auto min-h-[70vh] max-w-2xl px-6 pb-24 pt-28 md:pt-36">
+    <div className="mx-auto min-h-[70vh] max-w-4xl px-6 pb-24 pt-28 md:pt-36">
       <h1 className="text-3xl font-medium md:text-4xl">Track your order</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         {isSignedIn
@@ -183,7 +208,7 @@ export default function TrackOrder() {
           : "Enter your order number and email to see where your package is."}
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-10 space-y-8">
+      <form onSubmit={handleSubmit} noValidate className="mt-10 max-w-2xl space-y-8">
         <div className={`grid gap-8 ${isLoaded && !isSignedIn ? "sm:grid-cols-2" : ""}`}>
           <div>
             <label htmlFor="order-number" className={label}>
@@ -224,7 +249,7 @@ export default function TrackOrder() {
         <button
           type="submit"
           disabled={loading || !isLoaded}
-          className={`h-11 w-full border border-foreground px-10 text-xs uppercase tracking-[0.15em] transition-colors hover:bg-foreground hover:text-background disabled:opacity-50 motion-reduce:transition-none sm:w-auto ${focusRing}`}
+          className={`h-11 w-full border border-foreground px-10 text-xs uppercase tracking-[0.15em] transition-colors hover:bg-primary/25 disabled:opacity-50 motion-reduce:transition-none sm:w-auto ${focusRing}`}
         >
           {loading ? "Checking" : "Track order"}
         </button>

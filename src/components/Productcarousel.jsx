@@ -55,8 +55,7 @@ export default function ProductCarousel({ children, label = "Products" }) {
         role="region"
         aria-label={label}
         tabIndex={0}
-        className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:-mx-8 md:gap-5 md:px-8 [&::-webkit-scrollbar]:hidden"
-      >
+        className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth scroll-px-4 px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:-mx-8 md:scroll-px-8 md:gap-5 md:px-8 [&::-webkit-scrollbar]:hidden"      >
         {Array.isArray(children)
           ? children.map((child, i) => (
               <div

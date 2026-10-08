@@ -6,11 +6,34 @@ const DAY = 86_400_000;
 const ago = (d) => Date.now() - d * DAY;
 const ahead = (d) => Date.now() + d * DAY;
 
+/* ------------------------------------------------------------------
+   IMAGES
+   A product shows the first image it finds, in this order:
+     1. its own `image`
+     2. a brand image (BRAND_IMAGES)
+     3. a default for its category (CATEGORY_IMAGES)
+   Each entry can be one URL or a list. With a list, products get a
+   steady pick from it, so the grid isn't the same picture repeated.
+------------------------------------------------------------------ */
+
+const CLOUD = "https://res.cloudinary.com/zomqdsfa/image/upload/w_600,q_auto,f_auto";
+
+export const CATEGORY_IMAGES = {
+  skincare: [`${CLOUD}/v1791387398/skin2.webp`],
+  hair: [`${CLOUD}/v1791387396/hair1.webp`],
+  perfume: [`${CLOUD}/v1791387397/perfume1.webp`],
+};
+
+// Keyed by brand slug (lowercase, dashes). Add the brands you have photos for, e.g.:
+//   cerave: [`${CLOUD}/v123/cerave1.webp`, `${CLOUD}/v123/cerave2.webp`],
+//   "mc-beauty": [`${CLOUD}/v123/mc-beauty.webp`],
+export const BRAND_IMAGES = {};
+
 // helper: id, name, brand, category, type, price, extras
 const p = (id, name, brand, category, type, price, extra = {}) => ({
   id, name, brand, category, type, price,
   currency: "$",
-  image: null,                 // put real URLs here (see note in chat)
+  image: null,                 // set a URL here to override brand and category images
   description: `${brand} · ${type}`,
   compareAtPrice: null,        // original price when discounted
   stock: 20,
@@ -44,7 +67,19 @@ const discountPct = (x) => (x.compareAtPrice ? Math.round((1 - x.price / x.compa
 const within = (t, days) => t != null && t <= Date.now() && t >= ago(days);
 const isComingSoon = (x) => x.releaseDate != null && x.releaseDate > Date.now();
 
-// Badge is derived, never stored, so it can't go stale.
+// Steady pick from a list (same product always gets the same image).
+function pick(list, key) {
+  const urls = [].concat(list ?? []).filter(Boolean);
+  if (urls.length === 0) return null;
+  let hash = 0;
+  for (const ch of String(key)) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return urls[hash % urls.length];
+}
+
+const resolveImage = (x) =>
+  x.image ?? pick(BRAND_IMAGES[slugify(x.brand)], x.id) ?? pick(CATEGORY_IMAGES[x.category], x.id) ?? null;
+
+// Badge and image are derived, never stored, so they can't go stale.
 function withBadge(x) {
   let badge;
   if (isComingSoon(x)) badge = "Coming soon";
@@ -52,7 +87,7 @@ function withBadge(x) {
   else if (within(x.createdAt, 14)) badge = "New";
   else if (within(x.restockedAt, 14)) badge = "Back in stock";
   else if (discountPct(x) >= 10) badge = `-${discountPct(x)}%`;
-  return { ...x, badge };
+  return { ...x, image: resolveImage(x), badge };
 }
 
 const FILTERS = {
@@ -82,10 +117,50 @@ const COLLECTION_SORT = { "best-offers": "discount", "new-in": "new", deals: "di
 /**
  * params come straight from the URL: ?collection=&sort=&filter=&range=&category=
  */
-export async function queryProducts({ collection, sort, filter, range, category, limit = 24 } = {}) {
+const list = (v) => (v ? String(v).split(",").filter(Boolean) : []);
+export const slugify = (v) => String(v).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+/** Brands and categories (with counts) for filter panels and the Brands page. */
+export function getFacets() {
+  const live = CATALOG.filter((x) => !isComingSoon(x));
+  const tally = (get) => {
+    const map = new Map();
+    live.forEach((x) => map.set(get(x), (map.get(get(x)) ?? 0) + 1));
+    return [...map.entries()];
+  };
+  return {
+    brands: tally((x) => x.brand)
+      .map(([name, count]) => ({ name, slug: slugify(name), count }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    categories: tally((x) => x.category).map(([slug, count]) => ({ slug, count })),
+    types: [
+      ...new Map(
+        live.map((x) => [
+          slugify(x.type),
+          { name: x.type[0].toUpperCase() + x.type.slice(1), slug: slugify(x.type), category: x.category },
+        ])
+      ).values(),
+    ],
+  };
+}
+
+export async function queryProducts({ collection, sort, filter, range, category, brand, type, instock, limit = 24 } = {}) {
   let items = CATALOG.filter((x) => (filter === "coming-soon" ? isComingSoon(x) : !isComingSoon(x)));
 
-  if (category) items = items.filter((x) => x.category === category);
+  // category and brand accept comma lists: ?brand=cerave,olay
+  if (category) {
+    const c = list(category);
+    items = items.filter((x) => c.includes(x.category));
+  }
+  if (brand) {
+    const b = list(brand);
+    items = items.filter((x) => b.includes(slugify(x.brand)));
+  }
+  if (type) {
+    const t = list(type);
+    items = items.filter((x) => t.includes(slugify(x.type)));
+  }
+  if (instock) items = items.filter((x) => x.stock > 0);
   if (collection && COLLECTIONS[collection]) items = items.filter(COLLECTIONS[collection]);
   if (filter && FILTERS[filter]) items = items.filter(FILTERS[filter]);
   if (range === "week") items = items.filter((x) => within(x.createdAt, 7));

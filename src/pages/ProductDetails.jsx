@@ -269,7 +269,7 @@ export default function ProductDetails() {
                   type="button"
                   disabled={!product.in_stock}
                   onClick={() => addItem(product)}
-                  className={`h-12 flex-1 rounded-full bg-foreground text-sm font-medium text-background transition-colors hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`}
+                  className={`border border-foreground px-6 py-3 text-sm font-medium transition hover:bg-foreground hover:text-background ${focusRing}`}
                 >
                   {product.in_stock ? "Add to bag" : "Out of stock"}
                 </button>

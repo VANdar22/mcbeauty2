@@ -87,7 +87,8 @@ function GiftCardImage({ amount, className = "" }) {
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
-const pillButton = `rounded-full border border-foreground px-5 py-2.5 text-sm font-medium transition-all duration-200 ${focusRing} disabled:cursor-not-allowed disabled:opacity-30`;
+const pillButton =
+  "border border-foreground px-6 py-3 text-sm font-medium transition hover:bg-primary/25 ";
 
 const inputClass =
   "w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus:border-foreground focus:ring-1 focus:ring-foreground";
@@ -343,7 +344,7 @@ export default function Rewards() {
               type="button"
               aria-pressed={mode === value}
               onClick={() => setMode(value)}
-              className={`${pillButton} ${mode === value ? "bg-foreground text-background" : "hover:bg-muted"}`}
+              className={`${pillButton} `}
             >
               {label}
             </button>
@@ -385,8 +386,8 @@ export default function Rewards() {
             onConfirm={() => payForGiftCard({ amount: Number(amount), mode, recipientEmail })}
             onDone={handlePurchased}
             onError={() => setStatus({ type: "error", text: "Payment failed. Please try again." })}
-            trackColor="hsl(var(--foreground))"
-            handleColor="hsl(var(--background))"
+            trackColor="hsl(var(--primary)/0.15)"
+            handleColor="hsl(var(--primary)/0.45)"
             successColor="#22c55e"
             dangerColor="#e5484d"
             width={280}

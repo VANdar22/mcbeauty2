@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { searchProducts } from "../lib/catalog";
+import { searchProducts } from "../lib/Catalog";
 
 const MIN_CHARS = 2;
 const DEBOUNCE_MS = 250;

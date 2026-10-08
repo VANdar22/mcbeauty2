@@ -4,11 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useRewards, formatMoney } from "../components/Rewardscontext";
 import GiftCardTicket from "../components/GiftCardTicket";
 
-const solidButton =
-  "rounded-full bg-foreground px-7 py-3 text-sm font-medium text-background transition hover:opacity-80";
+
 
 const outlineButton =
-  "rounded-full border border-foreground px-6 py-3 text-sm font-medium transition hover:bg-foreground hover:text-background";
+  "border border-foreground px-6 py-3 text-sm font-medium transition hover:bg-foreground hover:text-background";
 
 export default function GiftCardReveal() {
   const navigate = useNavigate();
@@ -55,12 +54,20 @@ export default function GiftCardReveal() {
 
         <div className="absolute inset-0 flex items-center justify-center px-6">
           <div className="w-full max-w-md text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted text-xl">✓</div>
-            <h1 className="mt-6 text-3xl font-medium tracking-tight">Already redeemed</h1>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          <div className="mx-auto h-44 w-44 overflow-hidden rounded-full bg-muted sm:h-52 sm:w-52">
+  <video
+    src="https://res.cloudinary.com/zomqdsfa/image/upload/q_auto/v1791482492/cosmos_2016758772.mp4"
+    autoPlay
+    muted
+    playsInline
+    aria-hidden="true"
+    className="h-full w-full object-cover"
+  />
+  </div>
+            <p className="mt-3 text-base leading-6 text-muted-foreground">
               This gift card has already been added to your store credit.
             </p>
-            <button type="button" onClick={goBack} className={`${solidButton} mt-8`}>
+            <button type="button" onClick={goBack} className={`${outlineButton} mt-8`}>
               Back to rewards
             </button>
           </div>
@@ -83,20 +90,27 @@ export default function GiftCardReveal() {
       <main className="relative min-h-[100svh] w-full">
         <div className="absolute inset-0 flex items-center justify-center px-6">
           <div className="w-full max-w-md text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-foreground text-xl text-background">
-              ✓
-            </div>
+          <div className="mx-auto h-44 w-44 overflow-hidden rounded-full bg-muted sm:h-52 sm:w-52">
+  <video
+    src="https://res.cloudinary.com/zomqdsfa/image/upload/q_auto/v1791482492/cosmos_2016758772.mp4"
+    autoPlay
+    muted
+    playsInline
+    aria-hidden="true"
+    className="h-full w-full object-cover"
+  />
+</div>
 
-            <p className="mt-8 text-sm font-medium text-muted-foreground">Gift card redeemed</p>
-            <h1 className="mt-2 text-5xl font-medium tracking-tight">{formatMoney(card.amount)}</h1>
-            <p className="mt-4 text-base text-muted-foreground">Added to your store credit.</p>
+            <h1 className="mt-2 text-5xl font-medium text-green-500 tracking-tight">+ {formatMoney(card.amount)}</h1>
+            <p className="mt-4 text-base text-muted-foreground">Gift card redeemed successfully.</p>
 
             <div className="mt-10 border-y border-border py-6">
-              <p className="text-sm text-muted-foreground">Store credit</p>
-              <p className="mt-1 text-2xl font-medium">{formatMoney(newCredit)}</p>
+              <p className="mt-1 text-3xl font-medium">{formatMoney(newCredit)}</p>
+              <p className="text-base text-muted-foreground">Store credit</p>
+
             </div>
 
-            <button type="button" onClick={goBack} className={`${solidButton} mt-8 w-full`}>
+            <button type="button" onClick={goBack} className={`${outlineButton} mt-8 w-full`}>
               Done
             </button>
           </div>
