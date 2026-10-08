@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoimage from "../assets/MCBlogo.png";
 import { useCart } from "./Cartcontext";
-import SearchBox from "./SearchBox";
+import SearchBox from "./Searchbox";
 import { SignInButton, UserButton, useUser } from "../lib/clerk";
 
 /* ------------------------------------------------------------------ */

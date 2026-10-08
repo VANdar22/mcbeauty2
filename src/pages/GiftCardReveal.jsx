@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useRewards, formatMoney } from "../components/Rewardscontext";
-import GiftCardTicket from "../components/GiftCardTicket";
+import GiftCardTicket from "../components/Giftcardticket";
 
 const solidButton =
   "rounded-full bg-foreground px-7 py-3 text-sm font-medium text-background transition hover:opacity-80";
