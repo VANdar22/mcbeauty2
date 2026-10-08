@@ -6,9 +6,9 @@ const EMPTY = { points: 0, credit: 0, cards: [] };
 
 // TODO: load these from your settings / database
 export const REWARD_TIERS = [
-  { id: "t5", cost: 70, amount: 5 },
-  { id: "t10", cost: 1000, amount: 10 },
-  { id: "t25", cost: 2000, amount: 25 },
+  { id: "t5", cost: 70, amount: 25 },
+  { id: "t10", cost: 1000, amount: 50 },
+  { id: "t25", cost: 2000, amount: 100 },
 ];
 export const GIFT_CARD_PRESETS = [10, 25, 50, 100];
 export const GIFT_CARD_MIN = 5;

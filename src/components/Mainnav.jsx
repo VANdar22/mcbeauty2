@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoimage from "../assets/MCBlogo.png";
 import { useCart } from "./Cartcontext";
+import SearchBox from "./SearchBox";
+import { SignInButton, UserButton, useUser } from "../lib/clerk";
 
 /* ------------------------------------------------------------------ */
 /* 1. DATA LAYER — replace the bodies of these functions with your DB  */
@@ -31,14 +33,6 @@ const PLACEHOLDER_BRANDS = [
   { id: 7, name: "Palmer's", slug: "palmers" },
 ];
 
-// imageUrl: null shows a grey placeholder box until you have real images.
-// SHOP panel: 3 images (the Brands panel is text only)
-const PLACEHOLDER_SHOP_IMAGES = [
-  { id: 1, title: "Skincare", href: "/skincare", imageUrl: null },
-  { id: 2, title: "Haircare", href: "/haircare", imageUrl: null },
-  { id: 3, title: "Perfume", href: "/perfume", imageUrl: null },
-];
-
 async function fetchProductTypes() {
   // TODO: const res = await fetch("/api/product-types"); return res.json();
   return PLACEHOLDER_PRODUCT_TYPES;
@@ -48,28 +42,26 @@ async function fetchBrands() {
   // TODO: const res = await fetch("/api/brands?limit=20"); return res.json();
   return PLACEHOLDER_BRANDS;
 }
+
 async function fetchShopImages() {
   return [
     {
       id: 1,
       title: "Skincare",
       href: "/skincare",
-      imageUrl:
-        "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387398/skin2.webp",
+      imageUrl: "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387398/skin2.webp",
     },
     {
       id: 2,
       title: "Haircare",
       href: "/haircare",
-      imageUrl:
-        "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387396/hair1.webp",
+      imageUrl: "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387396/hair1.webp",
     },
     {
       id: 3,
       title: "Perfume",
       href: "/perfume",
-      imageUrl:
-        "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387397/perfume1.webp",
+      imageUrl: "https://res.cloudinary.com/zomqdsfa/image/upload/w_1000,q_auto:best,f_auto/v1791387397/perfume1.webp",
     },
   ];
 }
@@ -168,7 +160,8 @@ function ImageCard({ item }) {
             src={item.imageUrl}
             alt=""
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"          />
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
+          />
         ) : (
           <div className="grid h-full place-items-center text-xs text-muted-foreground">Image</div>
         )}
@@ -438,6 +431,51 @@ const Icon = {
   ),
 };
 
+function AccountButton() {
+  const { isLoaded, isSignedIn } = useUser();
+
+  if (!isLoaded) return <span className="inline-flex h-8 w-8" aria-hidden="true" />;
+
+  if (isSignedIn) {
+    return (
+      <span className="inline-flex p-1">
+        <UserButton />
+      </span>
+    );
+  }
+
+  return (
+    <SignInButton mode="modal">
+      <button type="button" aria-label="Sign in" className={`inline-flex p-1 ${focusRing}`}>
+        {Icon.user}
+      </button>
+    </SignInButton>
+  );
+}
+
+function MobileAccount() {
+  const { isLoaded, isSignedIn, user } = useUser();
+
+  if (!isLoaded) return null;
+
+  if (isSignedIn) {
+    return (
+      <div className="flex items-center gap-3 px-4 py-3.5 text-sm">
+        <UserButton />
+        <span>{user?.firstName || "My account"}</span>
+      </div>
+    );
+  }
+
+  return (
+    <SignInButton mode="modal">
+      <button type="button" className={`flex w-full items-center gap-3 px-4 py-3.5 text-sm ${focusRing}`}>
+        {Icon.user} Sign in
+      </button>
+    </SignInButton>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* 4. MAIN COMPONENT                                                   */
 /* ------------------------------------------------------------------ */
@@ -569,26 +607,12 @@ export default function Mainnav({
 
           {/* Right side */}
           <div className="flex items-center gap-3 md:ml-auto md:gap-5">
-            <form
-              role="search"
-              onSubmit={(e) => e.preventDefault()}
-              className="hidden h-9 w-64 items-center gap-2 border-b border-foreground/40 text-muted-foreground focus-within:border-primary md:flex lg:w-80"
-            >
-              {Icon.search}
-              <input
-                type="search"
-                placeholder="Search products"
-                aria-label="Search products"
-                className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-              />
-            </form>
-            <NavLink href="/account" aria-label="Account" className="inline-flex p-1">
-              {Icon.user}
-            </NavLink>
+            <SearchBox />
+            <AccountButton />
             <NavLink href="/cart" aria-label={`Cart, ${cartCount} items`} className="relative inline-flex p-1">
               {Icon.bag}
               {cartCount > 0 && (
-                <span className="absolute -right-0.5 top-0 grid h-4 min-w-4 place-items-center rounded-full bg-secondary px-1 text-[0.65rem] text-primary-foreground">
+                <span className="absolute -right-0.5 top-0 grid h-4 min-w-4 place-items-center rounded-full bg-secondary px-1 text-[0.65rem] text-gray-800">
                   {cartCount}
                 </span>
               )}
@@ -619,19 +643,7 @@ export default function Mainnav({
         onClick={(e) => e.target.closest("a") && closeAll()}
         className="absolute inset-x-0 top-full max-h-[80vh] overflow-y-auto border-b border-border bg-popover text-popover-foreground shadow-[0_14px_24px_-18px_rgb(0_0_0/0.18)] md:hidden"
       >
-        <form
-          role="search"
-          onSubmit={(e) => e.preventDefault()}
-          className="m-4 flex h-10 items-center gap-2 border-b border-muted-foreground/40 text-muted-foreground"
-        >
-          {Icon.search}
-          <input
-            type="search"
-            placeholder="Search products"
-            aria-label="Search products"
-            className="w-full bg-transparent text-sm text-popover-foreground outline-none placeholder:text-muted-foreground"
-          />
-        </form>
+        <SearchBox variant="mobile" onNavigate={closeAll} />
 
         {/* One accordion section per tab; only one open at a time */}
         {NAV_TABS.filter((t) => t.mega).map((tab) => {
@@ -671,9 +683,7 @@ export default function Mainnav({
         </NavLink>
 
         <div className="border-t border-border">
-          <NavLink href="/account" className="flex items-center gap-3 px-4 py-3.5 text-sm">
-            {Icon.user} Account
-          </NavLink>
+          <MobileAccount />
           <NavLink href="/cart" className="flex items-center gap-3 px-4 py-3.5 text-sm">
             {Icon.bag} Cart{cartCount > 0 ? ` (${cartCount})` : ""}
           </NavLink>

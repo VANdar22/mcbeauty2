@@ -1,215 +1,166 @@
-import React from 'react';
-import { ACCENT } from '@/constants/colors';
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-const Footer = () => {
-  const footerData = {
-    branding: {
-      text: "Obuase Complex JHS",
-      fontFamily: "'Montserrat', sans-serif",
-      fontWeight: 400,
-      fontSize: {
-        base: "1.25rem",
-        md: "1.5rem"
-      },
-      letterSpacing: "0.05em",
-      marginBottom: {
-        base: "0.75rem",
-        md: "1rem"
-      }
-    },
-    nav: {
-      links: [
-        { label: "CONTACT", url: "/contact" },
-        { label: "PRIVACY POLICY", url: "/privacy-policy" },
-        { label: "CONSENT PREFERENCES", url: "/consent-preferences" }
-      ],
-      style: {
-        fontFamily: "sans-serif",
-        fontSize: {
-          base: "0.7rem",
-          sm: "0.8rem"
-        },
-        fontWeight: 300,
-        letterSpacing: "0.12em",
-        color: "#333"
-      },
-      linksSpacing: {
-        base: "0.5rem",
-        sm: "1rem"
-      },
-      marginBottom: {
-        base: "0.75rem",
-        md: "1rem"
-      }
-    },
-    socials: {
-      items: [
-        { platform: "instagram", url: "https://instagram.com" },
-        { platform: "tiktok", url: "https://tiktok.com" }
-      ],
-      gap: {
-        base: "1rem",
-        md: "1.25rem"
-      },
-      iconSize: {
-        base: "1rem",
-        md: "1.2rem"
-      },
-      marginBottom: {
-        base: "1rem",
-        md: "1.25rem"
-      }
-    },
-    copyright: {
-      text: "All rights reserved - Copyright © 2025",
-      fontSize: {
-        base: "0.65rem",
-        sm: "0.75rem"
-      },
-      fontWeight: 300,
-      letterSpacing: "0.06em",
-      fontFamily: "'Montserrat Alternates', sans-serif",
-      color: ACCENT
+const NAV_LINKS = [
+  ["Shop", "/products"],
+  ["About us", "/about"],
+  ["Gallery", "/gallery"],
+  ["Contact", "/contact"],
+  ["FAQ", "/faq"],
+];
+
+const SOCIAL_LINKS = [
+  ["Instagram", "https://instagram.com"],
+  ["TikTok", "https://tiktok.com"],
+];
+
+const LEGAL_LINKS = [
+  ["Return Policy", "/returns"],
+  ["Terms & Conditions", "/terms"],
+  ["Privacy policy", "/privacy"],
+];
+
+const CURRENCIES = ["United States (USD)", "Ghana (GHS)", "United Kingdom (GBP)", "Europe (EUR)"];
+
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const heading = "text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground";
+const link = `underline-offset-4 hover:underline ${focusRing}`;
+
+async function subscribe(email) {
+  // TODO: replace with your API call
+  // const res = await fetch("/api/newsletter", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ email }),
+  // });
+  // if (!res.ok) throw new Error("Subscription failed");
+  return email;
+}
+
+export default function Footer({ brand = "MC Beauty", credit = "" }) {
+  const [email, setEmail] = useState("");
+  const [currency, setCurrency] = useState(CURRENCIES[0]);
+  const [status, setStatus] = useState(null);
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setStatus({ type: "error", text: "Please enter a valid email address." });
+      return;
     }
-  };
-
-  const SocialLink = ({ platform, url }) => {
-    const platformNames = {
-      instagram: 'INSTAGRAM',
-      tiktok: 'TIKTOK'
-    };
-
-    return (
-      <a 
-        href={url} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="hover:opacity-70 transition-opacity duration-200 uppercase tracking-wider"
-        style={footerData.nav.style}
-      >
-        {platformNames[platform]}
-      </a>
-    );
-  };
-
-  // Helper function to get responsive value
-  const getResponsiveValue = (value, breakpoint = 'base') => {
-    if (typeof value === 'object') {
-      return value[breakpoint] || value.base || value;
+    setSending(true);
+    try {
+      await subscribe(email.trim());
+      setEmail("");
+      setStatus({ type: "ok", text: "Thanks for subscribing!" });
+    } catch {
+      setStatus({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setSending(false);
     }
-    return value;
   };
 
   return (
-    <footer className="bg-gradient-to-b from-white to-blue-100 py-8 md:py-12">
-      <div 
-        className="mx-auto px-4 sm:px-6 py-4 md:py-6 text-center"
-        style={{
-          maxWidth: "1200px"
-        }}
-      >
-        {/* Branding */}
-        <div 
-          className="mb-6 md:mb-10"
-          style={{
-            fontFamily: footerData.branding.fontFamily,
-            fontWeight: footerData.branding.fontWeight,
-            fontSize: getResponsiveValue(footerData.branding.fontSize, 'md'),
-            letterSpacing: footerData.branding.letterSpacing,
-            marginBottom: getResponsiveValue(footerData.branding.marginBottom, 'md'),
-            color: ACCENT
-          }}
-        >
-          {footerData.branding.text}
-        </div>
-
-        {/* Navigation */}
-        <nav 
-          className="mb-6 md:mb-10"
-          style={{
-            marginBottom: getResponsiveValue(footerData.nav.marginBottom, 'md')
-          }}
-        >
-          <ul className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-8">
-            {footerData.nav.links.map((link, index) => (
-              <li key={index}>
-                <a 
-                  href={link.url} 
-                  className="hover:opacity-70 transition-opacity duration-200"
-                  style={footerData.nav.style}
-                >
-                  {link.label}
-                </a>
-              </li>
+    <footer className="bg-background text-foreground">
+      <div className="mx-auto grid max-w-[1400px] gap-12 px-6 pt-16 md:grid-cols-[1fr_auto] md:gap-24 md:px-10 md:pt-20">
+        <div className="space-y-8">
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-8 gap-y-3 text-sm uppercase tracking-[0.12em]">
+            {NAV_LINKS.map(([label, href]) => (
+              <Link key={label} to={href} className={link}>
+                {label}
+              </Link>
             ))}
-          </ul>
-        </nav>
+          </nav>
 
-        {/* Social Icons */}
-        <div 
-          className="flex justify-center mb-10"
-          style={{
-            gap: footerData.socials.gap,
-            marginBottom: footerData.socials.marginBottom
-          }}
-        >
-          {footerData.socials.items.map((social, index) => (
-            <a 
-              key={index} 
-              href={social.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity duration-200"
-              style={{
-                fontSize: '0.9rem',
-                letterSpacing: '0.12em'
-              }}
-            >
-              <SocialLink platform={social.platform} url={social.url} />
-            </a>
-          ))}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+            <span className={heading}>Follow us</span>
+            {SOCIAL_LINKS.map(([label, href]) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={link}>
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
 
-        {/* Copyright */}
-        <div 
-          className="mt-4 pt-4 border-t border-gray-400"
-        >
-          <div className="space-y-2 text-gray-700">
-            <p 
-              className="px-2"
-              style={{
-                fontSize: getResponsiveValue(footerData.copyright.fontSize, 'sm'),
-                fontWeight: footerData.copyright.fontWeight,
-                letterSpacing: footerData.copyright.letterSpacing,
-                fontFamily: footerData.copyright.fontFamily,
-                color: '#0E38B1',
-                lineHeight: '1.4'
-              }}
+        <div className="w-full space-y-6 md:w-96">
+          <h2 className={heading}>Subscribe to our newsletter</h2>
+
+          <form onSubmit={handleSubmit} noValidate className="flex items-end gap-4">
+            <label htmlFor="footer-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="footer-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+              autoComplete="email"
+              className={`h-10 min-w-0 flex-1 border-b border-foreground/40 bg-transparent text-sm placeholder:text-muted-foreground focus:border-foreground ${focusRing}`}
+            />
+            <button
+              type="submit"
+              disabled={sending}
+              className={`h-10 border border-foreground px-6 text-xs uppercase tracking-[0.15em] transition-colors hover:bg-foreground hover:text-background disabled:opacity-50 motion-reduce:transition-none ${focusRing}`}
             >
-              {footerData.copyright.text}
+              {sending ? "Sending" : "Submit"}
+            </button>
+          </form>
+
+          {status && (
+            <p
+              role="status"
+              className={`text-sm ${status.type === "error" ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              {status.text}
             </p>
-            <p className="text-xs font-montserrat-alt text-[#0E38B1]/60  ">
-              Designed by{' '}
-              <a 
-                href="https://2v2studios.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-[#0E38B1] hover:underline"
-                style={{ 
-                  fontFamily: '"Flexing", sans-serif',
-                  fontWeight: 600,
-                  fontSize: '1.2rem',
-                  letterSpacing: '0.5px'
-                }}
-              >
-                VANtech
-              </a>
-            </p>
+          )}
+
+          <div className="flex items-center gap-3 text-sm">
+            <label htmlFor="footer-currency" className={heading}>
+              Shop in
+            </label>
+            <select
+              id="footer-currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className={`cursor-pointer border-b border-foreground/40 bg-transparent py-1 pr-2 ${focusRing}`}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
+      </div>
+
+      <div className="overflow-hidden px-4 pb-6 pt-14 text-center md:pt-20" aria-hidden="true">
+        <span
+className="block whitespace-nowrap text-center text-[14vw] font-black uppercase leading-[0.85] tracking-tighter text-primary opacity-40"        >
+          {brand}
+        </span>
+      </div>
+
+      <div className="bg-background text-gray-500">
+        <div className="mx-auto grid max-w-[1400px] items-center gap-3 px-6 py-5 text-xs md:grid-cols-3 md:px-10">
+          <p>© {new Date().getFullYear()} {brand}. All rights reserved.</p>
+
+          <nav aria-label="Legal" className="flex flex-wrap gap-x-8 gap-y-2 md:justify-center">
+            {LEGAL_LINKS.map(([label, href]) => (
+              <Link key={label} to={href} className={link}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          {credit && <p className="md:text-right">{credit}</p>}
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

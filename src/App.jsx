@@ -10,6 +10,9 @@ import About from "./pages/About";
 import Cart from "./pages/Cart";
 import GiftCardReveal from "./pages/GiftCardReveal";
 import { RewardsProvider } from "./components/Rewardscontext";
+import Footer from "./components/Footer";
+import Search from "./pages/Search";
+import TrackOrder from "./pages/Trackorder";
 
 const menuItems = [
   { label: "Home", ariaLabel: "Go to home page", link: "/" },
@@ -41,9 +44,12 @@ function App() {
                 <Route
                   path="/rewards/card/:id"
                   element={<GiftCardReveal />}
-                />{" "}
+                />
+                <Route path="/search" element={<Search />} />
+                <Route path="/orders" element={<TrackOrder />} />
               </Routes>
             </main>
+            <Footer />
             <CartDrawer />
           </div>
         </Router>

@@ -19,6 +19,11 @@ module.exports = {
       fontFamily: {
         sans: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["Space Mono", "ui-monospace", "monospace"],
+        ranchers: ['"Ranchers"', "system-ui", "sans-serif"],
+        lobster: ['"Lobster"', "system-ui", "cursive"],
+        michroma: ['"Michroma"', "system-ui", "sans-serif"],
+        ultra: ['"Ultra"', "Georgia", "serif"],
+
       },
       colors: {
         border: "hsl(var(--border))",
@@ -27,7 +32,7 @@ module.exports = {
         background: "#FFFFFF",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0E38B1",
+          DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {

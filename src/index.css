@@ -1,317 +1,124 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ranchers&family=Lobster&family=Michroma&family=Ultra&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* =========================================================
-   BRAND COLORS
-   ========================================================= */
-
 @layer base {
   :root {
-    /* Main colors */
-    --background: 72 43% 95%;          /* #F5F7EC */
-    --foreground: 15 48% 27%;          /* #633626 */
-
+    --background: 20.0000 100.0000% 98.2353%;
+    --foreground: 19.2000 15.7233% 31.1765%;
     --card: 0 0% 100%;
-    --card-foreground: 15 48% 27%;
-
+    --card-foreground: 19.2000 15.7233% 31.1765%;
     --popover: 0 0% 100%;
-    --popover-foreground: 15 48% 27%;
-
-    /* Primary - Deep Brown */
-    --primary: 15 48% 27%;
+    --popover-foreground: 19.2000 15.7233% 31.1765%;
+    --primary: 341.8605 100% 74.7059%;
     --primary-foreground: 0 0% 100%;
-
-    /* Secondary - Muted Gold */
-    --secondary: 43 42% 55%;
-    --secondary-foreground: 0 0% 100%;
-
-    /* Muted - Warm Beige */
-    --muted: 39 54% 75%;
-    --muted-foreground: 15 35% 35%;
-
-    /* Accent - Light Cream */
-    --accent: 38 68% 89%;
-    --accent-foreground: 15 48% 27%;
-
-    /* Destructive */
-    --destructive: 0 60% 45%;
-    --destructive-foreground: 0 0% 100%;
-
-    /* Borders / Inputs */
-    --border: 39 54% 75%;
-    --input: 39 54% 75%;
-    --ring: 15 48% 27%;
-
-    /* =====================================================
-       BRAND VARIABLES
-       ===================================================== */
-
-    --brand-brown: 15 48% 27%;
-    --brand-gold: 43 42% 55%;
-    --brand-beige: 39 54% 75%;
-    --brand-cream: 38 68% 89%;
-    --brand-background: 72 43% 95%;
-
-    /* =====================================================
-       CHART COLORS
-       ===================================================== */
-
-    --chart-1: 15 48% 27%;
-    --chart-2: 43 42% 55%;
-    --chart-3: 39 54% 75%;
-    --chart-4: 38 68% 89%;
-    --chart-5: 15 35% 35%;
-
-    /* =====================================================
-       SIDEBAR
-       ===================================================== */
-
-    --sidebar: 38 68% 89%;
-    --sidebar-foreground: 15 48% 27%;
-    --sidebar-primary: 15 48% 27%;
+    --secondary: 23.0769 35.1351% 92.7451%;
+    --secondary-foreground: 19.2000 15.7233% 31.1765%;
+    --muted: 18.0000 50.0000% 96.0784%;
+    --muted-foreground: 20.6897 13.3641% 57.4510%;
+    --accent: 345.0000 100.0000% 92.9412%;
+    --accent-foreground: 344.1026 48.5477% 47.2549%;
+    --destructive: 358.0892 75.1196% 59.0196%;
+    --destructive-foreground: 300 20% 99.0196%;
+    --border: 21.1765 29.8246% 88.8235%;
+    --input: 21.1765 29.8246% 88.8235%;
+    --ring: 341.8605 100% 74.7059%;
+    --chart-1: 341.8605 100% 74.7059%;
+    --chart-2: 344.1026 48.5477% 47.2549%;
+    --chart-3: 11.3793 40.2778% 71.7647%;
+    --chart-4: 2.4000 69.4444% 85.8824%;
+    --chart-5: 12.5000 34.2857% 86.2745%;
+    --sidebar: 17.1429 53.8462% 97.4510%;
+    --sidebar-foreground: 19.2000 15.7233% 31.1765%;
+    --sidebar-primary: 341.8605 100% 74.7059%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 39 54% 75%;
-    --sidebar-accent-foreground: 15 48% 27%;
-    --sidebar-border: 39 54% 75%;
-    --sidebar-ring: 15 48% 27%;
-
-    /* =====================================================
-       TYPOGRAPHY
-       ===================================================== */
-
-    --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-    --font-serif: Georgia, "Times New Roman", serif;
-    --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-
-    /* =====================================================
-       DESIGN
-       ===================================================== */
-
+    --sidebar-accent: 345.0000 100.0000% 92.9412%;
+    --sidebar-accent-foreground: 344.1026 48.5477% 47.2549%;
+    --sidebar-border: 20.0000 37.5000% 90.5882%;
+    --sidebar-ring: 341.8605 100% 74.7059%;
+    --font-sans: Inter, system-ui, sans-serif;
+    --font-serif: Georgia, serif;
+    --font-mono: JetBrains Mono, monospace;
     --radius: 0.5rem;
-
-    /* Shadows */
-    --shadow-2xs: 0 1px 2px 0 hsl(15 48% 27% / 0.04);
-    --shadow-xs: 0 1px 3px 0 hsl(15 48% 27% / 0.06);
-    --shadow-sm:
-      0 1px 3px 0 hsl(15 48% 27% / 0.08),
-      0 1px 2px -1px hsl(15 48% 27% / 0.06);
-    --shadow:
-      0 2px 6px -1px hsl(15 48% 27% / 0.08),
-      0 1px 3px -1px hsl(15 48% 27% / 0.06);
-    --shadow-md:
-      0 4px 10px -2px hsl(15 48% 27% / 0.10),
-      0 2px 5px -2px hsl(15 48% 27% / 0.06);
-    --shadow-lg:
-      0 10px 20px -4px hsl(15 48% 27% / 0.12),
-      0 4px 8px -4px hsl(15 48% 27% / 0.06);
-    --shadow-xl:
-      0 20px 30px -8px hsl(15 48% 27% / 0.14),
-      0 8px 12px -6px hsl(15 48% 27% / 0.06);
-    --shadow-2xl:
-      0 25px 50px -12px hsl(15 48% 27% / 0.18);
+    --shadow-x: 0px;
+    --shadow-y: 2px;
+    --shadow-blur: 10px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0.03;
+    --shadow-color: 0 0% 0%;
+    --shadow-2xs: 0px 2px 10px 0px hsl(0 0% 0% / 0.01);
+    --shadow-xs: 0px 2px 10px 0px hsl(0 0% 0% / 0.01);
+    --shadow-sm: 0px 2px 10px 0px hsl(0 0% 0% / 0.03), 0px 1px 2px -1px hsl(0 0% 0% / 0.03);
+    --shadow: 0px 2px 10px 0px hsl(0 0% 0% / 0.03), 0px 1px 2px -1px hsl(0 0% 0% / 0.03);
+    --shadow-md: 0px 2px 10px 0px hsl(0 0% 0% / 0.03), 0px 2px 4px -1px hsl(0 0% 0% / 0.03);
+    --shadow-lg: 0px 2px 10px 0px hsl(0 0% 0% / 0.03), 0px 4px 6px -1px hsl(0 0% 0% / 0.03);
+    --shadow-xl: 0px 2px 10px 0px hsl(0 0% 0% / 0.03), 0px 8px 10px -1px hsl(0 0% 0% / 0.03);
+    --shadow-2xl: 0px 2px 10px 0px hsl(0 0% 0% / 0.07);
+    --tracking-normal: -0.01em;
+    --spacing: 0.25rem;
   }
-
-  /* =======================================================
-     DARK MODE
-     ======================================================= */
 
   .dark {
-    --background: 15 25% 10%;
-    --foreground: 38 68% 89%;
-
-    --card: 15 25% 13%;
-    --card-foreground: 38 68% 89%;
-
-    --popover: 15 25% 13%;
-    --popover-foreground: 38 68% 89%;
-
-    --primary: 38 68% 89%;
-    --primary-foreground: 15 48% 27%;
-
-    --secondary: 43 42% 55%;
-    --secondary-foreground: 15 25% 10%;
-
-    --muted: 15 20% 20%;
-    --muted-foreground: 39 30% 70%;
-
-    --accent: 39 54% 75%;
-    --accent-foreground: 15 48% 27%;
-
-    --destructive: 0 55% 45%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 15 20% 25%;
-    --input: 15 20% 25%;
-    --ring: 39 54% 75%;
-
-    --chart-1: 38 68% 89%;
-    --chart-2: 43 42% 55%;
-    --chart-3: 39 54% 75%;
-    --chart-4: 15 48% 27%;
-    --chart-5: 15 35% 35%;
-
-    --sidebar: 15 25% 13%;
-    --sidebar-foreground: 38 68% 89%;
-    --sidebar-primary: 38 68% 89%;
-    --sidebar-primary-foreground: 15 48% 27%;
-    --sidebar-accent: 15 20% 20%;
-    --sidebar-accent-foreground: 38 68% 89%;
-    --sidebar-border: 15 20% 25%;
-    --sidebar-ring: 39 54% 75%;
+    --background: 15 18.1818% 8.6275%;
+    --foreground: 17.1429 25.0000% 89.0196%;
+    --card: 18 16.1290% 12.1569%;
+    --card-foreground: 17.1429 25.0000% 89.0196%;
+    --popover: 18 16.1290% 12.1569%;
+    --popover-foreground: 17.1429 25.0000% 89.0196%;
+    --primary: 341.8605 100% 74.7059%;
+    --primary-foreground: 15 18.1818% 8.6275%;
+    --secondary: 15.0000 15.3846% 15.2941%;
+    --secondary-foreground: 17.1429 25.0000% 89.0196%;
+    --muted: 15.0000 15.3846% 15.2941%;
+    --muted-foreground: 20.6897 13.3641% 57.4510%;
+    --accent: 347.5000 24.4898% 19.2157%;
+    --accent-foreground: 345 100% 85.0980%;
+    --destructive: 358.0892 75.1196% 59.0196%;
+    --destructive-foreground: 300 20% 99.0196%;
+    --border: 18.4615 14.6067% 17.4510%;
+    --input: 18.4615 14.6067% 17.4510%;
+    --ring: 341.8605 100% 74.7059%;
+    --chart-1: 341.8605 100% 74.7059%;
+    --chart-2: 345 100% 85.0980%;
+    --chart-3: 11.3793 40.2778% 71.7647%;
+    --chart-4: 19.2000 15.7233% 31.1765%;
+    --chart-5: 18.4615 14.6067% 17.4510%;
+    --sidebar: 17.1429 21.2121% 6.4706%;
+    --sidebar-foreground: 17.1429 25.0000% 89.0196%;
+    --sidebar-primary: 341.8605 100% 74.7059%;
+    --sidebar-primary-foreground: 15 18.1818% 8.6275%;
+    --sidebar-accent: 347.5000 24.4898% 19.2157%;
+    --sidebar-accent-foreground: 345 100% 85.0980%;
+    --sidebar-border: 15.0000 15.3846% 15.2941%;
+    --sidebar-ring: 341.8605 100% 74.7059%;
+    --font-sans: Inter, system-ui, sans-serif;
+    --font-serif: Georgia, serif;
+    --font-mono: JetBrains Mono, monospace;
+    --radius: 0.5rem;
+    --shadow-x: 0px;
+    --shadow-y: 4px;
+    --shadow-blur: 15px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0.3;
+    --shadow-color: 0 0% 0%;
+    --shadow-2xs: 0px 4px 15px 0px hsl(0 0% 0% / 0.15);
+    --shadow-xs: 0px 4px 15px 0px hsl(0 0% 0% / 0.15);
+    --shadow-sm: 0px 4px 15px 0px hsl(0 0% 0% / 0.30), 0px 1px 2px -1px hsl(0 0% 0% / 0.30);
+    --shadow: 0px 4px 15px 0px hsl(0 0% 0% / 0.30), 0px 1px 2px -1px hsl(0 0% 0% / 0.30);
+    --shadow-md: 0px 4px 15px 0px hsl(0 0% 0% / 0.30), 0px 2px 4px -1px hsl(0 0% 0% / 0.30);
+    --shadow-lg: 0px 4px 15px 0px hsl(0 0% 0% / 0.30), 0px 4px 6px -1px hsl(0 0% 0% / 0.30);
+    --shadow-xl: 0px 4px 15px 0px hsl(0 0% 0% / 0.30), 0px 8px 10px -1px hsl(0 0% 0% / 0.30);
+    --shadow-2xl: 0px 4px 15px 0px hsl(0 0% 0% / 0.75);
   }
 }
-
-/* =========================================================
-   BASE STYLES
-   ========================================================= */
 
 @layer base {
   * {
     @apply border-border;
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
-    @apply bg-background text-foreground font-sans;
-
-    margin: 0;
-    min-width: 320px;
-    min-height: 100vh;
-    font-family: "Montserrat", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  button,
-  input,
-  textarea,
-  select {
-    font: inherit;
-  }
-
-  button {
-    cursor: pointer;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  ::selection {
-    background: hsl(var(--brand-gold));
-    color: white;
-  }
-}
-
-/* =========================================================
-   CUSTOM UTILITY CLASSES
-   ========================================================= */
-
-@layer utilities {
-  /* Brand backgrounds */
-
-  .bg-brand-brown {
-    background-color: hsl(var(--brand-brown));
-  }
-
-  .bg-brand-gold {
-    background-color: hsl(var(--brand-gold));
-  }
-
-  .bg-brand-beige {
-    background-color: hsl(var(--brand-beige));
-  }
-
-  .bg-brand-cream {
-    background-color: hsl(var(--brand-cream));
-  }
-
-  .bg-brand-background {
-    background-color: hsl(var(--brand-background));
-  }
-
-  /* Brand text */
-
-  .text-brand-brown {
-    color: hsl(var(--brand-brown));
-  }
-
-  .text-brand-gold {
-    color: hsl(var(--brand-gold));
-  }
-
-  .text-brand-beige {
-    color: hsl(var(--brand-beige));
-  }
-
-  /* Brand borders */
-
-  .border-brand-brown {
-    border-color: hsl(var(--brand-brown));
-  }
-
-  .border-brand-gold {
-    border-color: hsl(var(--brand-gold));
-  }
-
-  .border-brand-beige {
-    border-color: hsl(var(--brand-beige));
-  }
-}
-
-/* =========================================================
-   OPTIONAL SKINCARE-SITE COMPONENT STYLES
-   ========================================================= */
-
-@layer components {
-  .brand-button {
-    @apply inline-flex items-center justify-center rounded-md px-5 py-3 font-semibold transition-all duration-200;
-    background-color: hsl(var(--brand-brown));
-    color: white;
-  }
-
-  .brand-button:hover {
-    background-color: hsl(15 48% 22%);
-  }
-
-  .brand-button-secondary {
-    @apply inline-flex items-center justify-center rounded-md px-5 py-3 font-semibold transition-all duration-200;
-    background-color: hsl(var(--brand-gold));
-    color: white;
-  }
-
-  .brand-button-secondary:hover {
-    background-color: hsl(43 42% 48%);
-  }
-
-  .brand-card {
-    @apply rounded-lg transition-all duration-300;
-    background-color: white;
-    border: 1px solid hsl(var(--brand-beige));
-  }
-
-  .brand-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .brand-section {
-    background-color: hsl(var(--brand-background));
-  }
-
-  .brand-hero {
-    background-color: hsl(var(--brand-cream));
+    @apply bg-background text-foreground;
   }
 }
