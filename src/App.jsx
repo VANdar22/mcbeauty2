@@ -21,6 +21,7 @@ import Cart from "./pages/Cart";
 import GiftCardReveal from "./pages/GiftCardReveal";
 import Search from "./pages/Search";
 import TrackOrder from "./pages/Trackorder";
+import Checkout from "./pages/Checkout";
 import Notfound from "./pages/Notfound";
 import Products from "./pages/Products";
 
@@ -44,6 +45,7 @@ const ROUTES = [
   { path: "/products", element: <Products /> },
   { path: "/product/:id", element: <ProductDetails /> },
   { path: "/cart", element: <Cart /> },
+  { path: "/checkout", element: <Checkout /> },
   { path: "/rewards", element: <Rewards /> },
   { path: "/rewards/card/:id", element: <GiftCardReveal /> },
   { path: "/search", element: <Search /> },
@@ -65,7 +67,7 @@ const ROUTES = [
 const HIDE_NAV_AND_FOOTER = [/^\/rewards\/card\//];
 
 // Pages that keep the nav but hide the footer.
-const HIDE_FOOTER = [/^\/cart/, /^\/rewards/, /^\/order/, /^\/search/, /^\/product\//];
+const HIDE_FOOTER = [/^\/cart/, /^\/checkout/, /^\/rewards/, /^\/order/, /^\/search/, /^\/product\//];
 
 const matches = (list, path) => list.some((re) => re.test(path));
 const isKnownRoute = (path) => ROUTES.some((r) => matchPath({ path: r.path, end: true }, path));

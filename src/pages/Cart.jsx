@@ -1,8 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../components/Cartcontext";
-import SlideCommit from "../components/SlideCommit";
-import { useRewards } from "../components/Rewardscontext";
 
 const FREE_SHIPPING_THRESHOLD = 50; // TODO: load from your settings
 
@@ -13,24 +10,6 @@ const money = (currency, n) =>
 
 const pillBtn =
   " border border-foreground px-6 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
-
-// Measures the available width so the slider never overflows narrow phones.
-function useFitWidth(max) {
-  const ref = useRef(null);
-  const [width, setWidth] = useState(max);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setWidth(Math.min(max, Math.floor(el.clientWidth)));
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [max]);
-
-  return [ref, width];
-}
 
 function Thumb({ image, name }) {
   return (
@@ -72,17 +51,8 @@ function QtyStepper({ item, updateQty }) {
   );
 }
 
-// TODO: replace with your real payment call, e.g.
-// const res = await fetch("/api/pay", { method: "POST", body: JSON.stringify(order) });
-// if (!res.ok) throw new Error("Payment failed");
-async function pay(order) {
-  return order;
-}
-
 export default function Cart() {
   const { items, subtotal, cartCount, updateQty, removeItem, clearCart } = useCart();
-  const { earnPoints } = useRewards();
-  const [slideRef, slideWidth] = useFitWidth(280);
 
   const currency = items[0]?.currency ?? "$";
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
@@ -94,17 +64,14 @@ export default function Cart() {
         <p className="text-base font-medium text-muted-foreground md:text-lg">
           Oops! Looks like you haven't added anything yet.
         </p>
-    
+
         <img
           src="https://res.cloudinary.com/zomqdsfa/image/upload/v1791492783/copy_of_copy_of_cosmos_2032777511.webp"
           alt="Your bag is empty"
           className="mt-8 ml-6 h-auto w-full max-w-[20rem] object-contain sm:max-w-sm md:max-w-md"
         />
-    
-        <Link
-          to="/gallery"
-          className={`${pillBtn} mt-8  hover:bg-primary/25`}
-        >
+
+        <Link to="/products" className={`${pillBtn} mt-8 hover:bg-primary/25`}>
           Start shopping
         </Link>
       </div>
@@ -129,9 +96,7 @@ export default function Cart() {
         </button>
       </div>
 
-      {/* grid-cols-1 + min-w-0 stop long content from stretching the page sideways on phones */}
       <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
-        {/* Line items */}
         <ul className="min-w-0 divide-y divide-border border-y border-border">
           {items.map((item) => (
             <li key={item.id} className="flex gap-4 py-5 sm:gap-5 sm:py-6">
@@ -162,7 +127,6 @@ export default function Cart() {
           ))}
         </ul>
 
-        {/* Summary */}
         <aside className="h-fit min-w-0 space-y-5 bg-card p-5 text-card-foreground shadow-[var(--shadow-md)] sm:p-6">
           <h2 className="text-xl font-medium">Order summary</h2>
 
@@ -196,37 +160,16 @@ export default function Cart() {
             <span>{money(currency, subtotal)}</span>
           </div>
 
-          {/* The wrapper is measured; the slider is never wider than it */}
-          <div ref={slideRef} className="flex w-full justify-center">
-            <SlideCommit
-              label="Slide to pay"
-              doneLabel="Paid"
-              errorLabel="Payment failed"
-              onConfirm={() => pay({ items, subtotal, currency })}
-              onDone={() => {
-                console.log("paid");
-                earnPoints(subtotal); // 1 point per $1 spent. TODO: use your own rate
-                // Wait for the "Paid" animation to finish, then empty the bag.
-                setTimeout(clearCart, 1500);
-              }}
-              onError={(reason) => console.log(reason)}
-              trackColor="hsl(var(--primary)/0.25)"
-              handleColor="hsl(var(--primary)/0.45)"
-              successColor="#22c55e"
-              dangerColor="#e5484d"
-              width={slideWidth}
-              height={56}
-              radius={28}
-              speed={50}
-              returnBounce={0.38}
-              landingDip={0.026}
-              holdMs={1500}
-              outcome="resolve"
-              latency={1200}
-              disabled={items.length === 0}
-            />
-          </div>
-          <Link to="/gallery" className={`${pillBtn} block text-center hover:bg-muted`}>
+          <Link
+            to="/checkout"
+            className={`${pillBtn} block  text-center hover:bg-primary/25`}
+          >
+            Checkout
+          </Link>
+          <Link
+            to="/products"
+            className={`${pillBtn} block text-center hover:bg-primary/25`}
+          >
             Keep shopping
           </Link>
         </aside>

@@ -340,14 +340,14 @@ export default function Rewards() {
             ["gift", "Someone else"],
           ].map(([value, label]) => (
             <button
-              key={value}
-              type="button"
-              aria-pressed={mode === value}
-              onClick={() => setMode(value)}
-              className={`${pillButton} `}
-            >
-              {label}
-            </button>
+            key={value}
+            type="button"
+            aria-pressed={mode === value}
+            onClick={() => setMode(value)}
+            className={`${pillButton} ${mode === value ? "bg-primary/25" : "hover:bg-primary/10"}`}
+          >
+            {label}
+          </button>
           ))}
         </div>
 
@@ -386,8 +386,8 @@ export default function Rewards() {
             onConfirm={() => payForGiftCard({ amount: Number(amount), mode, recipientEmail })}
             onDone={handlePurchased}
             onError={() => setStatus({ type: "error", text: "Payment failed. Please try again." })}
-            trackColor="hsl(var(--primary)/0.15)"
-            handleColor="hsl(var(--primary)/0.45)"
+            trackColor="hsl(var(--background)/0.50)"
+            handleColor="hsl(var(--primary))"
             successColor="#22c55e"
             dangerColor="#e5484d"
             width={280}
